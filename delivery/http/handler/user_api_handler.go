@@ -56,6 +56,34 @@ func (uph *UserApiHandler) Authorized(next http.HandlerFunc) http.HandlerFunc {
 	}
 
 }
+
+func (uph *UserApiHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, errs := uph.userServices.Users()
+	if errs != nil {
+		fmt.Println("err1")
+		w.Header().Set("Content-Type", "application/json")
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		return
+	}
+
+	output, err := json.MarshalIndent(users, "", "\t\t")
+
+	if err != nil {
+		fmt.Println("err2")
+		w.Header().Set("Content-Type", "application/json")
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(output)
+	if err != nil {
+		fmt.Println("err3")
+		fmt.Println(err.Error())
+	}
+	return
+
+}
 func (uph *UserApiHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
@@ -153,33 +181,7 @@ func (uph *UserApiHandler) IsPhoneExists(w http.ResponseWriter, r *http.Request)
 	return
 
 }
-func (uph *UserApiHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, errs := uph.userServices.Users()
-	if errs != nil {
-		fmt.Println("err1")
-		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
 
-	output, err := json.MarshalIndent(users, "", "\t\t")
-
-	if err != nil {
-		fmt.Println("err2")
-		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(output)
-	if err != nil {
-		fmt.Println("err3")
-		fmt.Println(err.Error())
-	}
-	return
-
-}
 func (uph *UserApiHandler) GetUserByUsernameAndPassword(w http.ResponseWriter, r *http.Request) {
 
 	body := utils.BodyParser(r)
@@ -290,6 +292,7 @@ func (uph *UserApiHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("token", token)
 	w.Header().Add("expiry_date", expiryString)
 	_, _ = w.Write(output)
+	print(user1.FullName)
 	return
 }
 
@@ -356,11 +359,12 @@ func (uph *UserApiHandler) PutUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	l := r.ContentLength
+	// l := r.ContentLength
 
-	body := make([]byte, l)
+	// body := make([]byte, l)
 
-	_, _ = r.Body.Read(body)
+	// _, _ = r.Body.Read(body)
+	body:=utils.BodyParser(r)
 
 	_ = json.Unmarshal(body, &user1)
 	user1, errs = uph.userServices.UpdateUser(user1)

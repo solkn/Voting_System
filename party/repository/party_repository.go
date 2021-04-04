@@ -13,11 +13,11 @@ func NewPartyGormRepo(db *gorm.DB)*PartyGormRepo{
 	return &PartyGormRepo{conn: db}
 }
 
-func (partyRepo *PartyGormRepo) Candidates()([]entity.Party,[]error){
+func (partyRepo *PartyGormRepo) Parties()([]entity.Party,[]error){
 
 	var parties []entity.Party
 
-	errs := partyRepo.conn.Preload("party").Find(&parties).GetErrors()
+	errs := partyRepo.conn.Find(&parties).GetErrors()
 
 	if(len(errs)>0){
 		return nil,errs
@@ -30,7 +30,7 @@ func (partyRepo *PartyGormRepo)Party(id uint)(*entity.Party,[]error){
 
 	party:= entity.Party{}
 
-	errs:= partyRepo.conn.Preload("party").First("party",id).GetErrors()
+	errs:= partyRepo.conn.First(&party,id).GetErrors()
 	if(len(errs) > 0){
 
 		return nil,errs

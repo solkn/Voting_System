@@ -19,8 +19,8 @@ func NewPartyApiHandler(partyServ party.PartyServices)*PartyApiHandler{
 
 func (pah *PartyApiHandler)GetParties(w http.ResponseWriter,r *http.Request)  {
 
-	parties,errs:= pah.partyServices.Candidates()
-	if(errs!=nil){
+	parties,errs:= pah.partyServices.Parties()
+	if  len(errs)>0{
 		w.Header().Set("Content-Type","application/json")
 		http.Error(w,http.StatusText(http.StatusInternalServerError),http.StatusInternalServerError)
 		return
@@ -33,6 +33,8 @@ func (pah *PartyApiHandler)GetParties(w http.ResponseWriter,r *http.Request)  {
 	}
 	w.Header().Set("Content-Type","application/json")
 	w.Write(output)
+
+	return
 }
 func (pah *PartyApiHandler)GetParty(w http.ResponseWriter,r *http.Request){
 	params := mux.Vars(r)
@@ -62,7 +64,7 @@ func (pah *PartyApiHandler)GetParty(w http.ResponseWriter,r *http.Request){
 	w.Header().Set("Content-Type","application/json")
 	w.Write(output)
 
-
+ return
 }
 
 func (pah *PartyApiHandler)PostParty(w http.ResponseWriter,r *http.Request){
@@ -91,6 +93,7 @@ func (pah *PartyApiHandler)PostParty(w http.ResponseWriter,r *http.Request){
 	}
 	w.Header().Set("Content-Type","application/json")
 	w.Write(output)
+	return
 }
 
 func (pah *PartyApiHandler) PutParty(w http.ResponseWriter, r *http.Request) {
@@ -109,16 +112,17 @@ func (pah *PartyApiHandler) PutParty(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	l := r.ContentLength
+	// l := r.ContentLength
 
-	body := make([]byte, l)
+	// body := make([]byte, l)
 
-	_, err = r.Body.Read(body)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
+	// _, err = r.Body.Read(body)
+	// if err != nil {
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	// 	return
+	// }
+	body:= utils.BodyParser(r)
 	err = json.Unmarshal(body, &party)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

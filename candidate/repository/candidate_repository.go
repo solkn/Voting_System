@@ -17,7 +17,7 @@ func (candidateRepo *CandidateGormRepo) Candidates()([]entity.Candidate,[]error)
 
 	var candidates []entity.Candidate
 
-	errs := candidateRepo.conn.Preloads("party").Find(&candidates).GetErrors()
+	errs := candidateRepo.conn.Preload("Party").Find(&candidates).GetErrors()
 
 	if(len(errs)>0){
 		return nil,errs
@@ -30,7 +30,7 @@ func (candidateRepo *CandidateGormRepo)Candidate(id uint)(*entity.Candidate,[]er
 
 	candidate:= entity.Candidate{}
 
-	errs:= candidateRepo.conn.Preloads("party").First("candidate",id).GetErrors()
+	errs:= candidateRepo.conn.Preload("Party").First(&candidate,id).GetErrors()
 	if(len(errs) > 0){
 
 		return nil,errs
@@ -38,17 +38,17 @@ func (candidateRepo *CandidateGormRepo)Candidate(id uint)(*entity.Candidate,[]er
 	return &candidate,errs
 }
 
-func (candidateRepo *CandidateGormRepo)UpdateCandidate(party *entity.Candidate)(*entity.Candidate,[]error){
+func (candidateRepo *CandidateGormRepo)UpdateCandidate(candidate *entity.Candidate)(*entity.Candidate,[]error){
 
-	errs:= candidateRepo.conn.Save(party).GetErrors()
-	if(len(errs) >0){
+	errs:= candidateRepo.conn.Preload("Party").Save(candidate).GetErrors()
+	if len(errs) > 0{
 		return nil, errs
 	}
 
-	return party,errs
+	return candidate,errs
 }
 func (candidateRepo *CandidateGormRepo)StoreCandidate(candidate *entity.Candidate)(*entity.Candidate,[]error){
-	errs:= candidateRepo.conn.Create(candidate).GetErrors()
+	errs:= candidateRepo.conn.Preload("Party").Create(candidate).GetErrors()
 	if(len(errs) >0){
 		return nil,errs
 	}
@@ -62,7 +62,8 @@ func (candidateRepo *CandidateGormRepo) DeleteCandidate(id uint)(*entity.Candida
 
 		return nil,errs
 	}
-	errs = candidateRepo.conn.Delete(candidate,id).GetErrors()
+	errs = candidateRepo.conn.Delete(&candidate,id).GetErrors()
+	
 
 	if(len(errs) > 0){
 		return nil,errs

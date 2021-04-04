@@ -141,11 +141,12 @@ func (uph *RoleApiHandler) PutRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	l := r.ContentLength
+	// l := r.ContentLength
 
-	body := make([]byte, l)
+	// body := make([]byte, l)
 
-	r.Body.Read(body)
+	// r.Body.Read(body)
+	body:=utils.BodyParser(r)
 
 	json.Unmarshal(body, &user1)
 

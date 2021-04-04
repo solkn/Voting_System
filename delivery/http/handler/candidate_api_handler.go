@@ -117,16 +117,17 @@ func (cah *CandidateApiHandler) PutCandidate(w http.ResponseWriter, r *http.Requ
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	l := r.ContentLength
+	// l := r.ContentLength
 
-	body := make([]byte, l)
+	// body := make([]byte, l)
 
-	_, err = r.Body.Read(body)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
+	// _, err = r.Body.Read(body)
+	// if err != nil {
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	// 	return
+	// }
+	body := utils.BodyParser(r)
 	err = json.Unmarshal(body, &candidate)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

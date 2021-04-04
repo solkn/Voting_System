@@ -21,32 +21,37 @@ func NewResultApiHandler(resultServ result.ResultServices) *ResultApiHandler {
 func (rah *ResultApiHandler)GetResults(w http.ResponseWriter,r *http.Request)  {
 
 	results,errs:= rah.resultServices.Results()
-	if(errs!=nil){
+	if len(errs) > 0 {
 		w.Header().Set("Content-Type","application/json")
 		http.Error(w,http.StatusText(http.StatusInternalServerError),http.StatusInternalServerError)
 		return
 	}
 	output,err:=json.MarshalIndent(results,"","\t\t")
-	if(err!=nil){
+	if err != nil {
 		w.Header().Set("Content-Type","application/json")
 		http.Error(w,http.StatusText(http.StatusInternalServerError),http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type","application/json")
 	w.Write(output)
+	return
+
+
+
+	
 }
 func (rah *ResultApiHandler)GetResult(w http.ResponseWriter,r *http.Request){
 	params := mux.Vars(r)
-	id,err:= strconv.Atoi(params["id"])
-	if(err!=nil){
-		w.Header().Set("Content-Type","application/json")
-		http.Error(w,http.StatusText(http.StatusNotFound),http.StatusNotFound)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		http.Error(w, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity)
 		return
 	}
 
-	result, errs:= rah.resultServices.Result(uint(id))
+	result, errs := rah.resultServices.Result(uint(id))
 
-	if (errs != nil) {
+	if len(errs) > 0 {
 		w.Header().Set("Content-Type","application/json")
 		http.Error(w,http.StatusText(http.StatusNotFound),http.StatusNotFound)
 		return
@@ -110,16 +115,17 @@ func (rah *ResultApiHandler) PutResult(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	l := r.ContentLength
+	// l := r.ContentLength
 
-	body := make([]byte, l)
+	// body := make([]byte, l)
 
-	_, err = r.Body.Read(body)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
+	// _, err = r.Body.Read(body)
+	// if err != nil {
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	// 	return
+	// }
+	body := utils.BodyParser(r)
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

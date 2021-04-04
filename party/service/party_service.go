@@ -13,9 +13,9 @@ func NewPartyService(partyRepos party.PartyRepository)*PartyService{
 	return &PartyService{partyRepo: partyRepos}
 }
 
-func (ps *PartyService) Candidates()([]entity.Party,[]error){
+func (ps *PartyService) Parties()([]entity.Party,[]error){
 
-	parties,errs:= ps.partyRepo.Candidates()
+	parties,errs:= ps.partyRepo.Parties()
 	if(len(errs)>0){
 		return nil,errs
 	}

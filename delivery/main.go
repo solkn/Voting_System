@@ -33,7 +33,7 @@ func createTables(dbConn *gorm.DB) []error {
 		&entity.Candidate{}).GetErrors()
 	dbConn.Debug().Model(&entity.User{}).AddForeignKey("role_id", "roles(Id)", "cascade", "cascade")
 	dbConn.Debug().Model(&entity.Result{}).AddForeignKey("party_id", "parties(Id)", "cascade", "cascade")
-	dbConn.Debug().Model(&entity.Candidate{}).AddForeignKey("partyID", "parties(Id)", "cascade", "cascade")
+	dbConn.Debug().Model(&entity.Candidate{}).AddForeignKey("party_id", "parties(Id)", "cascade", "cascade")
 
 	if len(errs) > 0 {
 		return errs

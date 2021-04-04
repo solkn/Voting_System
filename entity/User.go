@@ -8,7 +8,7 @@ type User struct {
 	Phone    string `gorm:"type:varchar(255);not null; unique" json:"phone"`
 	Password string `gorm:"type:varchar(255)" json:"password"`
 	RoleID   int    `json:"role_id"`
-	Role     Role   `gorm:"many2many" json:"roles"`
+	Role     Role   `gorm:"many2many" json:"role_name"`
 }
 
 

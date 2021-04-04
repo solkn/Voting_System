@@ -38,7 +38,7 @@ func (c *CandidateService) StoreCandidate(candidate *entity.Candidate) (*entity.
 }
 
 func (c *CandidateService) UpdateCandidate(candidate *entity.Candidate) (*entity.Candidate, []error) {
-	candt,errs:=c.candidateRepo.UpdateCandidate(candidate)
+	candt,errs:= c.candidateRepo.UpdateCandidate(candidate)
 	if(len(errs)>0){
 		return nil,errs
 	}
@@ -46,7 +46,7 @@ func (c *CandidateService) UpdateCandidate(candidate *entity.Candidate) (*entity
 }
 
 func (c *CandidateService) DeleteCandidate(id uint) (*entity.Candidate, []error) {
-	candidate,errs:=c.candidateRepo.DeleteCandidate(id)
+	candidate,errs:= c.candidateRepo.DeleteCandidate(id)
 	if(len(errs)>0){
 		return nil,errs
 	}
